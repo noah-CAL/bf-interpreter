@@ -9,17 +9,30 @@ const char *TOKENS = "<>+-[].";
 char memory[MEM_SIZE];
 int mem_ptr = 0;
 
-int main(int argc, char* argv) {
-    char *sample = "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.";
-    char c = '+';
-    if (!is_valid_expression(sample, strlen(sample))) {
-        // printf("%s", sample);
+int main(int argc, char *argv[]) {
+    char *input = "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.";
+    if (argc > 1) {
+        input = argv[1];
+    }
+    if (!is_valid_expression(input, strlen(input))) {
+        printf("Invalid expression");
         return -1;
     }
-    calculate_expression(sample, strlen(sample));
-    printf("%c", '\n');
+    // parse_input(input, strlen(input));
+    calculate_expression(input, strlen(input));
     return 0;
 }
+
+/**
+ * Goes through each command one-by-one and passes its contents to 
+ * the calculate_expression function. For loops, passes the contents
+ * of each self-contained block.
+ * Returns VOID
+*/
+// void parse_input(char *input, int length) {
+    /* Separates each portion of the input by the [ ] delimeters
+    * in order to evaluate loops. */
+// }
 
 /**
  * Checks if EXPRESSION is a valid BF expression. A valid expression consists
@@ -51,17 +64,18 @@ int is_valid_expression(char *expression, int length) {
 */
 // TODO: make function return non-void value
 void *calculate_expression(char *expression, int length) {
-    // if (!is_valid_expression(expression, length)) {
-    //     return -1;
-    // }
+    if (!is_valid_expression(expression, length)) {
+        printf("Invalid expression: %s", expression);
+        return NULL;
+    }
     for (int i = 0; i < length; i += 1) {
         char c = *(expression + i);
         switch (c) {
             case '<':
-                mem_ptr += 1;
+                mem_ptr -= 1;
                 break;
             case '>':
-                mem_ptr -= 1;
+                mem_ptr += 1;
                 break;
             case '+':
                 memory[mem_ptr] += 1;
