@@ -69,9 +69,14 @@ int is_valid_expression(char *expression, int length) {
         if (c == ']') {
             bracket_count -= 1;
         }
-        if (bracket_count < 0 || strchr(TOKENS, c) == NULL) {
+        if (strchr(TOKENS, c) == NULL) {
+            printf("Token %c is not an acceptable input", c);
             return 0;
         }
+    }
+    if (bracket_count > 0) {  // TODO: add support for nested [] (i.e. make it work without allowing negative bracket_counts for the recursion)
+        printf("Mismatched braces in %s", expression);
+        return 0;
     }
     return 1;
 }
@@ -83,7 +88,6 @@ int is_valid_expression(char *expression, int length) {
 // TODO: make function return non-void value
 void *calculate_expression(char *expression, int length) {
     if (!is_valid_expression(expression, length)) {
-        printf("Invalid expression: %s", expression);
         return NULL;
     }
     for (int i = 0; i < length; i += 1) {
@@ -105,7 +109,14 @@ void *calculate_expression(char *expression, int length) {
             case '[':
                 while (memory->data[mem_ptr] != 0) {
                     /* Begin one char after [ */
-                    calculate_expression(expression + 1, strlen(expression + 1));
+                    calculate_expression(expression + i + 1, strlen(expression + i + 1));
+                }
+                for (int j = i; j < length; j += 1) {
+                    char c = *(expression + j);
+                    if (c == ']') {
+                        i = j;
+                        break;
+                    }
                 }
                 break;
             case ']':

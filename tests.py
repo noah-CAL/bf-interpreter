@@ -8,15 +8,16 @@ class TestBasicIO(unittest.TestCase):
 
     def test_letter_h(self):
         command = "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++."
-        result = subprocess.run(["./a.out", command], capture_output=True)
-        self.assertEqual("H", result.stdout.decode())
-        # self.check_output(command, "H")
+        self.check_output(command, "H")
 
     def test_basic_loop(self):
         command = "+++[-]"
-        self.assertTrue(True)
+        self.check_output(command, "")
 
-    @unittest.skip
+    def test_intermediate_loop(self):
+        command = "++++++[--]"
+        self.check_output(command, "")
+
     def test_letter_h_loops(self):
         command = ">++++++++[<+++++++++>-]<."
         self.check_output(command, "H")
