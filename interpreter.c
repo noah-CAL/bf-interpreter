@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "interpreter.h"
 
@@ -6,10 +7,27 @@ const char *TOKENS = "<>+-[].";
 
 /* Initialize 1 KiB of DMEM (by default)*/
 #define MEM_SIZE 1024
-char memory[MEM_SIZE];
-int mem_ptr = 0;
+
+typedef struct {
+    char *data;
+    int mem_ptr;
+} DMEM;
+
+DMEM *memory;
+
+void initialize_data_memory() {
+    memory = (DMEM *) malloc(sizeof(DMEM));
+    memory->data = (char *) calloc(MEM_SIZE, sizeof(char));
+    memory->mem_ptr = 0;
+}
+
+void free_data_memory() {
+    free(memory->data);
+    free(memory);
+}
 
 int main(int argc, char *argv[]) {
+    initialize_data_memory();
     char *input = "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.";
     if (argc > 1) {
         input = argv[1];
@@ -18,8 +36,8 @@ int main(int argc, char *argv[]) {
         printf("Invalid expression");
         return -1;
     }
-    // parse_input(input, strlen(input));
     calculate_expression(input, strlen(input));
+    free_data_memory();
     return 0;
 }
 
@@ -70,29 +88,30 @@ void *calculate_expression(char *expression, int length) {
     }
     for (int i = 0; i < length; i += 1) {
         char c = *(expression + i);
+        int mem_ptr = memory->mem_ptr;
         switch (c) {
             case '<':
-                mem_ptr -= 1;
+                memory->mem_ptr -= 1;
                 break;
             case '>':
-                mem_ptr += 1;
+                memory->mem_ptr += 1;
                 break;
             case '+':
-                memory[mem_ptr] += 1;
+                memory->data[mem_ptr] += 1;
                 break;
             case '-':
-                memory[mem_ptr] -= 1;
+                memory->data[mem_ptr] -= 1;
                 break;
             case '[':
-                while (memory[mem_ptr] != 0) {
-                    /* Begin one char after [ and end one char before ']'*/
-                    calculate_expression(expression + 1, length - 1);
+                while (memory->data[mem_ptr] != 0) {
+                    /* Begin one char after [ */
+                    calculate_expression(expression + 1, strlen(expression + 1));
                 }
                 break;
             case ']':
                 return NULL;
             case '.':
-                printf("%c", (memory[mem_ptr]));
+                printf("%c", memory->data[mem_ptr]);
                 break;
         }
     }
