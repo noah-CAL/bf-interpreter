@@ -22,6 +22,14 @@ class TestBasicIO(unittest.TestCase):
         command = ">++++++++[<+++++++++>-]<."
         self.check_output(command, "H")
 
+class TestIntegration(unittest.TestCase):
+    check_output = TestBasicIO.check_output
+
+    def test_hello_world(self):
+        command = (">++++++++[<+++++++++>-]<.>++++[<+++++++>-]<+.+++++++..+++.>>++++++[<+++++++>-]<+"
+            + "+.------------.>++++++[<+++++++++>-]<+.<.+++.------.--------.>>>++++[<++++++++>-"
+            + "]<+.")
+        self.check_output(command, "Hello, World!")
 
 if __name__ == "__main__":
     unittest.main()

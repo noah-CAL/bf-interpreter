@@ -42,17 +42,6 @@ int main(int argc, char *argv[]) {
 }
 
 /**
- * Goes through each command one-by-one and passes its contents to 
- * the calculate_expression function. For loops, passes the contents
- * of each self-contained block.
- * Returns VOID
-*/
-// void parse_input(char *input, int length) {
-    /* Separates each portion of the input by the [ ] delimeters
-    * in order to evaluate loops. */
-// }
-
-/**
  * Checks if EXPRESSION is a valid BF expression. A valid expression consists
  * of <>+-. tokens, or a matching set of [] with proper enclosed tokens.
  * RETURNS:
@@ -94,6 +83,8 @@ void *calculate_expression(char *expression, int length) {
         char c = *(expression + i);
         int mem_ptr = memory->mem_ptr;
         switch (c) {
+            case '\n':
+                break;
             case '<':
                 memory->mem_ptr -= 1;
                 break;
